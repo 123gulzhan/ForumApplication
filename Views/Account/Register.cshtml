@@ -5,7 +5,7 @@
     Layout = "_Layout";
 }
 
-<h2>Регистрация нового пользователя</h2>
+<h2 class="text-center">Регистрация нового пользователя</h2>
 <div class="row justify-content-center">
     <div class="col-md-6">
         <form method="post" asp-controller="Account" asp-action="Register">
@@ -14,7 +14,7 @@
             <div class="form-group">
                 <label asp-for="Name"></label><br/>
                 <input class="form-control" asp-for="Name" />
-                <span asp-validation-for="Name"></span>
+                <span asp-validation-for="Name" style="color: red;"></span>
             </div>
             
             <div class="form-group">

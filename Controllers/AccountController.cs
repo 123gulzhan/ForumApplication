@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ForumApp.Models;
 using ForumApp.Services;
@@ -38,14 +39,25 @@ namespace ForumApp.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, false);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Posts");
                 }
+                
                 else
                 {
                     foreach (var error in result.Errors)
                     {
-                        ModelState.AddModelError(String.Empty, error.Description);
-                        ModelState.AddModelError("name", "Укажите ваше имя на латинице");
+                        if (error.Description.Contains("taken"))
+                        {
+                            ModelState.AddModelError("name", "Имя занято");
+                        }
+                        else if(error.Description.Contains("letters"))
+                        {
+                            ModelState.AddModelError("name", "Укажите ваше имя на латинице");    
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(String.Empty, error.Description);
+                        }
                     }
                 }
             }
@@ -73,7 +85,7 @@ namespace ForumApp.Controllers
                     model.Password, false, false);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Posts");
                 }
                 else
                 {

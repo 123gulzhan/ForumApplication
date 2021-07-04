@@ -1,0 +1,65 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using X.PagedList.Mvc.Bootstrap4.Core
+@using X.PagedList.Mvc.Core
+@using Castle.DynamicProxy.Generators.Emitters
+@model X.PagedList.IPagedList<ForumApp.Models.Post>
+
+@{
+    ViewBag.Title = "Публикации";
+    Layout = "_Layout";
+}
+
+<div class="d-flex flex-row align-items-baseline my-4">
+<h4>@ViewBag.Title</h4>
+<a asp-controller="Posts" asp-action="Create" class="ml-3 font-italic">(Добавить пост)</a>    
+</div>
+
+@using (Html.BeginForm("Index", "Posts", FormMethod.Get))
+{
+    <p class="mb-4">
+        Поиск по автору: @Html.TextBox("searchByName", ViewBag.searchByName as string)
+        <input type="submit" class="btn btn-light ml-2 py-1" value="Искать"/>
+    </p>
+}
+
+
+@if (Model.Count != 0)
+{
+    @foreach (var post in Model)
+    {
+        <div class="card mb-3" style="max-width: 540px;">
+          <div class="row no-gutters">
+              <div class="col-md-4">
+                  @if (post.Path != null)
+                  {
+                      <img src="@post.Path" class="card-img" alt="изображение из поста">
+                      
+                  }
+                  else
+                  {
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/%D0%9D%D0%B5%D1%82_%D1%84%D0%BE%D1%82%D0%BE.png" 
+                           class="card-img" alt="изображение из поста">
+                  }
+              </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title">@post.User.UserName</h5>
+                <p class="card-text">@post.Text</p>
+                <p class="card-text"><small class="text-muted">@post.DatePublish</small></p>
+              </div>
+            </div>
+          </div>
+        </div>
+    }
+}
+else
+{
+    <hr>
+    <h5 class="font-italic">Публикаций нет</h5>
+    <hr>
+}
+<p class="text-left">Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount </p>
+<div class="row justify-content-start pl-3">
+  @Html.PagedListPager(Model, page => Url.Action("Index", "Posts", 
+    new {page, searchByName = ViewBag.searchByName}), Bootstrap4PagedListRenderOptions.Classic)
+</div>
