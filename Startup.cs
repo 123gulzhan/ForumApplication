@@ -2,9 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ForumApp.Models;
+using ForumApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,6 +28,19 @@ namespace ForumApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            string connection = Configuration.GetConnectionString("DbConnection");
+            services.AddDbContext<ForumAppContext>(options =>
+                    options.UseLazyLoadingProxies()
+                        .UseNpgsql(connection))
+                .AddIdentity<User, IdentityRole>(
+                    options =>
+                    {
+                        options.Password.RequiredLength = 6; 
+                        options.Password.RequireNonAlphanumeric = false;
+                    })
+                .AddEntityFrameworkStores<ForumAppContext>();
+            services.AddTransient<FileUploadService>();
+            //services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/Login");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +62,7 @@ namespace ForumApp
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -1,0 +1,36 @@
+﻿@model ForumApp.ViewModels.LoginViewModel
+
+@{
+    ViewBag.Title = "Вход";
+    Layout = "_Layout";
+}
+
+<h2>Введите данные для входа</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form method="post" asp-controller="Account" asp-action="Login">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <label asp-for="Name"></label><br/>
+                <input class="form-control" asp-for="Name"/>
+                <span asp-validation-for="Name"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password"></label><br/>
+                <input class="form-control" asp-for="Password"/>
+                <span asp-validation-for="Password"></span>
+            </div>
+           
+            <div class="form-group">
+                <input class="form-control" type="submit" value="Войти"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
